@@ -1,0 +1,107 @@
+/* Order screen meta box */
+.wc-custom-order-email-metabox .wc-custom-order-email-row {
+	padding: 6px 0;
+}
+
+.wc-custom-order-email-metabox hr {
+	margin: 10px 0;
+	border: 0;
+	border-top: 1px solid #eee;
+}
+
+.wc-custom-order-email-metabox .description {
+	margin: 4px 0 8px;
+}
+
+/* Orders list badges */
+.wc-custom-order-email-badge {
+	display: inline-block;
+	font-size: 12px;
+	padding: 1px 6px;
+	border-radius: 3px;
+	margin-bottom: 2px;
+}
+
+.wc-custom-order-email-badge--sent {
+	background: #edfaef;
+	color: #1e7e34;
+}
+
+.wc-custom-order-email-badge--pending {
+	background: #f5f5f5;
+	color: #777;
+}
+
+/* Placeholder chips (settings screen) */
+.wc-custom-order-email-placeholder-chips {
+	margin-bottom: 6px;
+}
+
+.wc-custom-order-email-chip {
+	margin: 0 4px 4px 0 !important;
+	font-family: monospace;
+}
+
+/* Copy-between-languages toolbar */
+.wc-custom-order-email-copy-toolbar {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	padding: 10px 12px;
+	margin-bottom: 16px;
+}
+
+.wc-custom-order-email-copy-toolbar label {
+	margin: 0 8px;
+}
+
+/* Preview / test-send row */
+.wc-custom-order-email-actions {
+	margin-top: 8px;
+}
+
+.wc-custom-order-email-test-send-result {
+	margin-left: 8px;
+	font-style: italic;
+}
+
+.wc-custom-order-email-result--success {
+	color: #1e7e34;
+}
+
+.wc-custom-order-email-result--error {
+	color: #b32d2e;
+}
+
+/* Preview modal */
+.wc-custom-order-email-modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.wc-custom-order-email-modal {
+	background: #fff;
+	padding: 20px;
+	max-width: 700px;
+	width: 90%;
+	max-height: 85vh;
+	overflow: auto;
+	border-radius: 4px;
+}
+
+.wc-custom-order-email-modal-iframe {
+	width: 100%;
+	height: 400px;
+	border: 1px solid #dcdcde;
+}
+
+.wc-custom-order-email-modal-close {
+	margin-top: 12px;
+}

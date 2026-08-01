@@ -2,32 +2,33 @@
 
 ![WordPress](https://img.shields.io/badge/WordPress-%E2%89%A55.0-blue) ![WooCommerce](https://img.shields.io/badge/WooCommerce-%E2%89%A55.0-purple) ![PHP](https://img.shields.io/badge/PHP-%E2%89%A57.4-777BB4) ![License](https://img.shields.io/badge/License-GPL--2.0-green)
 
-A flexible WooCommerce plugin that adds custom order email actions with multi-language support, allowing store administrators to manually send tailored emails to customers directly from the order admin panel.
+A WooCommerce extension that adds two manually-triggered order emails - **Resend Payment Details** and **Order Processing Error** - each configurable in German, English, and French, and sent from a dedicated meta box on the order screen.
 
 ---
 
 ## ✨ Features
 
-- 📧 Add custom email actions to WooCommerce orders
-- 🌍 Multi-language support (German, English, French)
-- 📝 Fully customizable email subject and content
-- 🔄 Dynamic placeholders for order data
-- 🚫 Prevents duplicate email sending
-- 🧾 Automatically logs emails in order notes
-- ⚙️ Dedicated admin settings page
-- 🧠 Supports both Classic WooCommerce order storage and HPOS (High-Performance Order Storage)
-- ⚡ AJAX-powered language handling in admin UI
+- 📧 Two order emails, built as native `WC_Email` classes
+- ⚙️ Configured under **WooCommerce → Settings → Emails**, alongside every other WooCommerce email
+- 🌍 Multi-language subject, heading, and content (German, English, French)
+- 📝 WYSIWYG (TinyMCE) content editor with placeholder-insertion chips
+- 🔁 "Copy content between languages" toolbar and a client-side live preview
+- ✉️ "Send Test Email" button using your most recent real order
+- 🚫 Each email can only be sent once per order, with an explicit "allow resending" override
+- 🧾 Sent emails are logged in order notes and shown in an orders-list column
+- 📦 Bulk action to send the processing-error email to multiple orders at once
+- 🧠 Works with both Classic order storage and HPOS (High-Performance Order Storage)
 
 ---
 
-## 📌 Available Email Actions
+## 📌 Available Emails
 
-| Action | Description |
+| Email | Description |
 |---|---|
 | **Resend Payment Details** | Resends payment info to the customer |
-| **Order Processing Error Notification** | Notifies the customer of a processing issue |
+| **Order Processing Error** | Notifies the customer of a processing issue |
 
-These actions appear in the order actions dropdown and can be triggered manually by the admin.
+Both are sent from a **Custom Order Emails** meta box on the order edit screen: pick a language, click Send. There's no automatic trigger - these are always sent deliberately by an admin.
 
 ---
 
@@ -37,7 +38,7 @@ These actions appear in the order actions dropdown and can be triggered manually
 - 🇬🇧 English (`en`)
 - 🇫🇷 French (`fr`)
 
-Each email type can be configured independently per language.
+Each email has its own subject, heading, and content per language, all on one settings page (no tab navigation to lose unsaved edits).
 
 ---
 
@@ -46,17 +47,17 @@ Each email type can be configured independently per language.
 1. Upload the plugin folder to `/wp-content/plugins/woocommerce-custom-order-email`
 2. Activate the plugin via **WordPress Admin → Plugins**
 3. Ensure WooCommerce is installed and active
-4. Go to **WooCommerce → Custom E-Mails** to configure your templates
+4. Go to **WooCommerce → Settings → Emails** and open **Resend Payment Details** or **Order Processing Error** to configure templates
 
 ---
 
 ## ⚙️ Configuration
 
-Navigate to **WooCommerce → Custom E-Mails** in your WordPress admin. You can configure:
+Each email's settings screen (under **WooCommerce → Settings → Emails**) lets you configure:
 
-- Email subject
-- Email content (with WYSIWYG / TinyMCE editor)
-- Separate templates per email type and language
+- Enable/disable and email type (HTML, plain text, or multipart)
+- Subject, heading, and content for each of the three languages
+- Content via a TinyMCE editor, with placeholder chips and a preview/test-send button
 
 ---
 
@@ -84,7 +85,7 @@ Navigate to **WooCommerce → Custom E-Mails** in your WordPress admin. You can 
 
 ### Order Items
 ```
-{order_items}           → renders a full HTML table
+{order_items}           → renders a full HTML table (plain-text emails get a bulleted list instead)
 {wc-order-item-name}    → comma-separated product names
 ```
 
@@ -92,38 +93,41 @@ Navigate to **WooCommerce → Custom E-Mails** in your WordPress admin. You can 
 
 ## 📬 Email Behavior
 
-- Emails are sent using WordPress `wp_mail()`
-- HTML format is supported
-- Each email type is sent **only once per order**
-- Sent emails are logged in order notes and marked via order meta to prevent resending
+- Built on WooCommerce's `WC_Email`, so sending goes through `wc_mail()`/`wp_mail()` with the store's standard header/footer branding
+- HTML, plain-text, and multipart formats are all supported
+- Each email type is sent **only once per order** by default; use "Allow resending" in the order meta box to lift that
+- Sending is recorded in an order note and in order meta (date + language), shown in the meta box and the orders list
 
 ---
 
 ## 🔒 Safety & Validation
 
-- Prevents duplicate email sending
-- Sanitizes all user inputs
-- Uses nonces for form and AJAX security
-- Displays admin notices for success, errors, and missing templates
+- Nonce-protected send/reset actions and AJAX requests
+- Capability-checked (`manage_woocommerce`) on every admin action
+- Placeholder values are escaped for HTML output
+- Orders without a billing email are skipped with a clear notice instead of silently failing
 
 ---
 
 ## 🧠 Technical Overview
 
 ### Architecture
-- Singleton pattern for main plugin class
-- Hook-based integration with WooCommerce
-- Modular structure using WordPress APIs
+
+- `WC_Custom_Order_Email` (abstract, extends `WC_Email`) - shared multi-language settings fields, placeholder handling, and send-once tracking
+- `WC_Custom_Order_Email_Payment` / `WC_Custom_Order_Email_Processing` - the two concrete emails
+- `WC_Custom_Order_Email_Orders` - order-screen meta box, admin-post send/reset handlers, orders-list column, bulk action
+- `WC_Custom_Order_Email_Admin` - settings-screen JS/AJAX enhancements (placeholder chips, preview, test send)
 
 ### Key Hooks Used
 
 ```php
-woocommerce_order_actions
-woocommerce_order_action_*
-admin_menu
-admin_init
-admin_enqueue_scripts
-wp_ajax_*
+woocommerce_email_classes
+woocommerce_email_header / woocommerce_email_footer
+add_meta_boxes
+admin_post_wc_custom_order_email_send / _reset
+manage_edit-shop_order_columns / woocommerce_shop_order_list_table_columns
+bulk_actions-edit-shop_order / bulk_actions-woocommerce_page_wc-orders
+wp_ajax_wc_custom_order_email_test_send
 ```
 
 ### Compatibility
@@ -132,24 +136,15 @@ wp_ajax_*
 |---|---|
 | WordPress | ≥ 5.0 |
 | PHP | ≥ 7.4 |
-| WooCommerce | ≥ 5.0 (tested up to 8.0) |
-
----
-
-## 📁 Admin UI Features
-
-- Tab-based interface (email type tabs + language tabs)
-- Rich text editor (TinyMCE)
-- AJAX-powered language switching
-- Inline styling for better UX
+| WooCommerce | ≥ 5.0 (tested up to 9.4) |
 
 ---
 
 ## ⚠️ Notes
 
-- Emails will not send if subject or content is missing
-- Each email type can only be sent once per order
-- Language selection defaults to German if not provided
+- Emails won't send if the order has no billing email address
+- Each email type can only be sent once per order unless explicitly reset
+- The bulk-send action uses a default language (English), since there's no per-order language picker in bulk mode
 
 ---
 
@@ -157,9 +152,7 @@ wp_ajax_*
 
 - [ ] Add more languages dynamically
 - [ ] Support for email attachments
-- [ ] Email preview functionality
-- [ ] Integration with WooCommerce email templates
-- [ ] Conditional logic for sending emails
+- [ ] Conditional/automatic triggers (e.g. auto-send on a status change) alongside the manual actions
 
 ---
 
