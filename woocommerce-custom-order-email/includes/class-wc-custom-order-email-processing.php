@@ -18,7 +18,7 @@ class WC_Custom_Order_Email_Processing extends WC_Custom_Order_Email {
 		parent::__construct();
 	}
 
-	public function get_default_subject( $language ) {
+	public function get_language_default_subject( $language ) {
 		$subjects = array(
 			'de' => __( 'Problem bei der Bearbeitung Ihrer Bestellung {order_number}', 'wc-custom-order-email' ),
 			'en' => __( 'There was a problem processing your order {order_number}', 'wc-custom-order-email' ),
@@ -28,7 +28,7 @@ class WC_Custom_Order_Email_Processing extends WC_Custom_Order_Email {
 		return isset( $subjects[ $language ] ) ? $subjects[ $language ] : $subjects['en'];
 	}
 
-	public function get_default_heading( $language ) {
+	public function get_language_default_heading( $language ) {
 		$headings = array(
 			'de' => __( 'Bestellung in Bearbeitung - Fehler', 'wc-custom-order-email' ),
 			'en' => __( 'Order Processing Error', 'wc-custom-order-email' ),
@@ -38,7 +38,7 @@ class WC_Custom_Order_Email_Processing extends WC_Custom_Order_Email {
 		return isset( $headings[ $language ] ) ? $headings[ $language ] : $headings['en'];
 	}
 
-	public function get_default_content( $language ) {
+	public function get_language_default_content( $language ) {
 		$content = array(
 			'de' => '<p>Hallo {customer_first_name},</p><p>bei der Bearbeitung Ihrer Bestellung {order_number} vom {order_date} ist ein Problem aufgetreten. Unser Team wurde informiert und wird sich in Kürze bei Ihnen melden.</p><p>Bestellsumme: {order_total}</p>{order_items}',
 			'en' => '<p>Hello {customer_first_name},</p><p>We ran into a problem processing your order {order_number} placed on {order_date}. Our team has been notified and will be in touch shortly.</p><p>Order total: {order_total}</p>{order_items}',

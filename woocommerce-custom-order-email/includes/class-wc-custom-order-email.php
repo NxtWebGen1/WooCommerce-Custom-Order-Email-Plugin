@@ -41,17 +41,17 @@ abstract class WC_Custom_Order_Email extends WC_Email {
 	/**
 	 * Subclasses must return the built-in default subject for a language.
 	 */
-	abstract public function get_default_subject( $language );
+	abstract public function get_language_default_subject( $language );
 
 	/**
 	 * Subclasses must return the built-in default heading for a language.
 	 */
-	abstract public function get_default_heading( $language );
+	abstract public function get_language_default_heading( $language );
 
 	/**
 	 * Subclasses must return the built-in default content for a language.
 	 */
-	abstract public function get_default_content( $language );
+	abstract public function get_language_default_content( $language );
 
 	public function __construct() {
 		$this->customer_email = true;
@@ -91,7 +91,7 @@ abstract class WC_Custom_Order_Email extends WC_Email {
 				'type'        => 'text',
 				'desc_tip'    => true,
 				'description' => __( 'Placeholders: {order_number}, {customer_name}, {customer_first_name}, {order_date}, {order_total}, {wc-order-item-name}', 'wc-custom-order-email' ),
-				'default'     => $this->get_default_subject( $lang_code ),
+				'default'     => $this->get_language_default_subject( $lang_code ),
 			);
 
 			$fields[ 'heading_' . $lang_code ] = array(
@@ -100,7 +100,7 @@ abstract class WC_Custom_Order_Email extends WC_Email {
 				'type'        => 'text',
 				'desc_tip'    => true,
 				'description' => __( 'The heading shown at the top of the email body (same placeholders as the subject).', 'wc-custom-order-email' ),
-				'default'     => $this->get_default_heading( $lang_code ),
+				'default'     => $this->get_language_default_heading( $lang_code ),
 			);
 
 			$fields[ 'content_' . $lang_code ] = array(
@@ -108,7 +108,7 @@ abstract class WC_Custom_Order_Email extends WC_Email {
 				'title'       => sprintf( __( 'Content (%s)', 'wc-custom-order-email' ), $lang_label ),
 				'type'        => 'custom_wysiwyg',
 				'description' => __( 'Placeholders: {order_number}, {customer_name}, {customer_first_name}, {customer_email}, {order_date}, {order_total}, {billing_address}, {shipping_address}, {order_items}, {wc-order-item-name}', 'wc-custom-order-email' ),
-				'default'     => $this->get_default_content( $lang_code ),
+				'default'     => $this->get_language_default_content( $lang_code ),
 			);
 		}
 

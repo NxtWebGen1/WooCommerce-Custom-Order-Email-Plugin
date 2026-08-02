@@ -32,13 +32,15 @@ define( 'WC_CUSTOM_ORDER_EMAIL_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WC_CUSTOM_ORDER_EMAIL_PLUGIN_FILE', __FILE__ );
 
 /**
- * Load the plugin once WooCommerce (and its WC_Email base class) is ready.
+ * Set up the parts of the plugin that don't depend on WC_Email.
+ *
+ * WooCommerce's own email base class (WC_Email) isn't loaded yet at
+ * "woocommerce_loaded" - it's only required later, when WC_Emails::init()
+ * runs on the "init" hook. So our classes that extend WC_Email must be
+ * require'd lazily, inside the woocommerce_email_classes filter callback
+ * below, not here.
  */
 function wc_custom_order_email_init() {
-	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email.php';
-	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email-payment.php';
-	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email-processing.php';
-
 	add_filter( 'woocommerce_email_classes', 'wc_custom_order_email_register_classes' );
 
 	if ( is_admin() ) {
@@ -54,8 +56,16 @@ add_action( 'woocommerce_loaded', 'wc_custom_order_email_init' );
 /**
  * Register our custom emails with WooCommerce so they appear under
  * WooCommerce > Settings > Emails alongside the built-in ones.
+ *
+ * This filter is applied by WC_Emails::init() on the "init" hook, by which
+ * point WC_Email is guaranteed to be loaded - safe to require our classes
+ * that extend it here.
  */
 function wc_custom_order_email_register_classes( $email_classes ) {
+	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email.php';
+	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email-payment.php';
+	require_once WC_CUSTOM_ORDER_EMAIL_PLUGIN_DIR . 'includes/class-wc-custom-order-email-processing.php';
+
 	$email_classes['WC_Custom_Order_Email_Payment']    = new WC_Custom_Order_Email_Payment();
 	$email_classes['WC_Custom_Order_Email_Processing'] = new WC_Custom_Order_Email_Processing();
 
