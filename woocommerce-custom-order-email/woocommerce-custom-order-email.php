@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WooCommerce Custom Order Email
- * Plugin URI: https://github.com/NxtWebGen1/WooCommerce-Custom-Order-Email-Plugin
+ * Plugin URI: https://github.com/murslinshehzad-code/WooCommerce-Custom-Order-Email-Plugin
  * Description: Adds "Resend Payment Details" and "Order Processing Error" order emails to WooCommerce, with templates configurable in German, English, and French.
  * Version: 2.0.0
  * Author: Murslin Shehzad
- * Author URI: https://github.com/NxtWebGen1
+ * Author URI: https://github.com/murslinshehzad-code
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wc-custom-order-email
